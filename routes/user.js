@@ -1,39 +1,20 @@
 var express = require('express');
+
 var router = express.Router();
+
+const productHelpers = require('../helpers/product-helpers');
 const userHelpers=require('../helpers/user-helpers')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  let user=req.session.user
 
-  let products=[
-    {
-      name:"apple",
-      category:'mobile',
-      description:"good one",
-      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQwYNLRJHnP4Y7cG9gOXbEYKkLtfVDuVzh8Yg&usqp=CAU"
-    },
-    {
-      name:"apple",
-      category:'mobile',
-      description:"good one",
-      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQwYNLRJHnP4Y7cG9gOXbEYKkLtfVDuVzh8Yg&usqp=CAU"
-    },
-    {
-      name:"apple",
-      category:'mobile',
-      description:"good one",
-      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQwYNLRJHnP4Y7cG9gOXbEYKkLtfVDuVzh8Yg&usqp=CAU"
-    },
-    {
-      name:"apple",
-      category:'mobile',
-      description:"good one",
-      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQwYNLRJHnP4Y7cG9gOXbEYKkLtfVDuVzh8Yg&usqp=CAU"
-    }
-  ]
+  
 
 
-  res.render('index', { products,admin:false });
+  productHelpers.getAllProducts().then((products)=>{
+    res.render('user/view-products',{products})
+  })
 });
 
 router.get('/login',(req,res)=>{
@@ -53,6 +34,8 @@ router.post('/login',(req,res)=>{
 
   userHelpers.doLogin(req.body).then((response)=>{
     if(response.status){
+      req.session.loggedIn=true
+      req.session.user=response.user
       res.redirect('/')
     }else{
       res.redirect('/login')

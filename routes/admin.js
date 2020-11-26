@@ -1,42 +1,33 @@
 var express = require('express');
+const { render } = require('../app');
+const productHelpers = require('../helpers/product-helpers');
 var router = express.Router();
+var productHelper=require('../helpers/product-helpers')
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  let products=[
-    {
-      name:"apple",
-      category:'mobile',
-      description:"good one",
-      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQwYNLRJHnP4Y7cG9gOXbEYKkLtfVDuVzh8Yg&usqp=CAU"
-    },
-    {
-      name:"apple",
-      category:'mobile',
-      description:"good one",
-      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQwYNLRJHnP4Y7cG9gOXbEYKkLtfVDuVzh8Yg&usqp=CAU"
-    },
-    {
-      name:"apple",
-      category:'mobile',
-      description:"good one",
-      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQwYNLRJHnP4Y7cG9gOXbEYKkLtfVDuVzh8Yg&usqp=CAU"
-    },
-    {
-      name:"apple",
-      category:'mobile',
-      description:"good one",
-      image:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQwYNLRJHnP4Y7cG9gOXbEYKkLtfVDuVzh8Yg&usqp=CAU"
-    }
-  ]
-  res.render('admin/view-products',{admin:true,products})
+  productHelpers.getAllProducts().then((products)=>{
+    res.render('admin/view-products',{admin:true,products})
+  })
+  
 });
 router.get('/add-product',function(req,res){
-  res.render('admin/add-product')
+  res.render('admin/add-product',{admin:true})
 
 })
 router.post('/add-product',(req,res)=>{
-  console.log(req.body);
-  console.log(req.files.Image);
+  
+
+  productHelpers.addProduct(req.body,(id)=>{
+    let image=req.files.Image
+    image.mv('./public/product-images/'+id+'.jpg',(err)=>{
+      if(!err){
+        res.render("admin/add-product")
+      }else{
+        console.log(err);
+      }
+    })
+    res.render("admin.add-product")
+  })
 })
 module.exports = router;
