@@ -9,11 +9,11 @@ const userHelpers=require('../helpers/user-helpers')
 router.get('/', function(req, res, next) {
   let user=req.session.user
 
-  
+  console.log(user);
 
 
   productHelpers.getAllProducts().then((products)=>{
-    res.render('user/view-products',{products})
+    res.render('user/view-products',{products,user})
   })
 });
 
@@ -42,5 +42,8 @@ router.post('/login',(req,res)=>{
     }
   })
 })
-
+router.get('/logout',(req,res)=>{
+  req.session.destroy()
+  res.redirect('/')
+})
 module.exports = router;
