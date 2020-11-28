@@ -91,5 +91,9 @@ router.post('/change-product-quantity',(req,res,next)=>{
       res.json(response)
   })
 })
+router.get('/place-order',(req,res)=>{
+  console.log("api call");
+  res.render('user/place-order')
+})
 
 module.exports = router;
