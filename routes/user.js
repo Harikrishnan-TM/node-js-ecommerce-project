@@ -88,7 +88,8 @@ router.get('/add-to-cart/:id',(req,res)=>{
 })
 
 router.post('/change-product-quantity',(req,res,next)=>{
-  userHelpers.changeProductQuantity(req.body).then((response)=>{
+  userHelpers.changeProductQuantity(req.body).then(async(response)=>{
+    response.total=await userHelpers.getTotalAmount(req.body.user)
       res.json(response)
   })
 })
