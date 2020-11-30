@@ -6,6 +6,11 @@ const { response } = require('express')
 //const { ObjectId } = require('mongodb')
 //const { ObjectID } = require('mongodb')
 var objectId=require('mongodb').ObjectId
+const Razorpay=require('razorpay')
+var instance = new Razorpay({
+    key_id: 'rzp_test_B3VORIUHTvlZUW',
+    key_secret: 'BGbZMWhNwSdVB74pyRAREvVv',
+  });
 module.exports={
     doSignup:(userData)=>{
         return new Promise(async(resolve,reject)=>{
@@ -250,7 +255,7 @@ module.exports={
 
             db.get().collection(collection.ORDER_COLLECTION).insertOne(orderObj).then((response)=>{
                 db.get().collection(collection.CART_COLLECTION).removeOne({user:objectId(order.userId)})
-                resolve()
+                resolve(response.ops[0]._id)
             })
 
 
@@ -313,5 +318,20 @@ module.exports={
             console.log(orderItems);
             resolve(orderItems)
         })     
+    },
+
+    generateRazorpay:(orderId,total)=>{
+        return new Promise((resolve,reject)=>{
+            var options = {
+                amount: total,  // amount in the smallest currency unit
+                currency: "INR",
+                receipt: ""+orderId
+              };
+              instance.orders.create(options, function(err, order) {
+                console.log("new order:",order);
+                resolve(order)
+              });
+
+        })
     }
 }
